@@ -20,22 +20,26 @@ const API_URL = 'http://jsonplaceholder.typicode.com';
  * @returns {Object} { url, options } The HTTP request parameters
  */
 const convertDataProviderRequestToHTTP = (type, resource, params) => {
+    console.log("Komut " + type);
     switch (type) {
     case GET_LIST: {
         const { page, perPage } = params.pagination;
         const { field, order } = params.sort;
         let start = (page - 1) * perPage;
         let sort = order.toLowerCase();
-        let url = `${API_URL}/${resource}?_start=${start}&_sort=${field}&_order=${sort}&_limit=${perPage}`;
+        let filt = params.filter.q === undefined ? '' : 'q=' + params.filter.q+'&';
+        let url = `${API_URL}/${resource}?${filt}_start=${start}&_sort=${field}&_order=${sort}&_limit=${perPage}`;
         return { url: url };
     }
     case GET_ONE:
         return { url: `${API_URL}/${resource}/${params.id}` };
     case GET_MANY: {
+        console.log("2 ");
         const query = {
             filter: JSON.stringify({ id: params.ids }),
         };
-        return { url: `${API_URL}/${resource}?${stringify(query)}` };
+        let url = `${API_URL}/${resource}?${stringify(query)}`;
+        return { url: url };
     }
     case GET_MANY_REFERENCE: {
         const { page, perPage } = params.pagination;
@@ -45,6 +49,7 @@ const convertDataProviderRequestToHTTP = (type, resource, params) => {
             range: JSON.stringify([(page - 1) * perPage, (page * perPage) - 1]),
             filter: JSON.stringify({ ...params.filter, [params.target]: params.id }),
         };
+        console.log("3 ");
         return { url: `${API_URL}/${resource}?${stringify(query)}` };
     }
     case UPDATE:
