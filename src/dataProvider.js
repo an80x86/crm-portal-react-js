@@ -34,11 +34,11 @@ const convertDataProviderRequestToHTTP = (type, resource, params) => {
     case GET_ONE:
         return { url: `${API_URL}/${resource}/${params.id}` };
     case GET_MANY: {
-        console.log("2 ");
         const query = {
             filter: JSON.stringify({ id: params.ids }),
         };
         let url = `${API_URL}/${resource}?${stringify(query)}`;
+        console.log("2 " + url);
         return { url: url };
     }
     case GET_MANY_REFERENCE: {
