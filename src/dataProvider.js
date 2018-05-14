@@ -20,28 +20,26 @@ const API_URL = 'http://localhost:49793/Handler.ashx?cmd=';//'http://jsonplaceho
  * @returns {Object} { url, options } The HTTP request parameters
  */
 const convertDataProviderRequestToHTTP = (type, resource, params) => {
-    console.log("Komut " + type);
+    console.log("Komut(1) " + type);
     switch (type) {
     case GET_LIST: {
         const { page, perPage } = params.pagination;
         const { field, order } = params.sort;
-        let start = (page - 1) * perPage;
-        let sort = order.toLowerCase();
-        let filt = params.filter.q === undefined ? '' : 'q=' + params.filter.q+'&';
-        //let url = `${API_URL}/${resource}?${filt}_start=${start}&_sort=${field}&_order=${sort}&_limit=${perPage}`;
-        let url = `${API_URL}${resource}&${filt}_start=${start}&_sort=${field}&_order=${sort}&_limit=${perPage}`;
-        console.log(url);
+        const start = (page - 1) * perPage;
+        const sort = order.toLowerCase();
+        const filt = params.filter.q === undefined ? '' : 'q=' + params.filter.q+'&';
+        const url = `${API_URL}${resource}&${filt}_start=${start}&_sort=${field}&_order=${sort}&_limit=${perPage}`;
         return { url };
     }
     case GET_ONE:
-        return { url: `${API_URL}/${resource}/${params.id}` };
+        const url = `${API_URL}${resource}&id=${params.id}`;
+        return { url };
     case GET_MANY: {
         const query = {
             filter: JSON.stringify({ id: params.ids }),
         };
         let url = `${API_URL}/${resource}?${stringify(query)}`;
-        console.log("2 " + url);
-        return { url: url };
+        return { url };
     }
     case GET_MANY_REFERENCE: {
         const { page, perPage } = params.pagination;
@@ -51,13 +49,13 @@ const convertDataProviderRequestToHTTP = (type, resource, params) => {
             range: JSON.stringify([(page - 1) * perPage, (page * perPage) - 1]),
             filter: JSON.stringify({ ...params.filter, [params.target]: params.id }),
         };
-        console.log("3 ");
         return { url: `${API_URL}/${resource}?${stringify(query)}` };
     }
     case UPDATE:
+        const options = { method: 'PUT', body: JSON.stringify(params.data) };
         return {
-            url: `${API_URL}/${resource}/${params.id}`,
-            options: { method: 'PUT', body: JSON.stringify(params.data) },
+            url : `${API_URL}${resource}&id=${params.id}`,
+            options
         };
     case CREATE:
         return {
@@ -82,6 +80,7 @@ const convertDataProviderRequestToHTTP = (type, resource, params) => {
  * @returns {Object} Data Provider response
  */
 const convertHTTPResponseToDataProvider = (response, type, resource, params) => {
+    console.log("Komut(2) " + type);
     const { json } = response;
     switch (type) {
     case GET_LIST:
@@ -91,8 +90,13 @@ const convertHTTPResponseToDataProvider = (response, type, resource, params) => 
         };
     case CREATE:
         return { data: { ...params.data, id: json.id } };
+    case GET_ONE:
+    case UPDATE:
+      const don = json.data[0];
+      return { data: don };
     default:
-        return { data: json };
+        const data = json.data;
+        return { data };
     }
 };
 

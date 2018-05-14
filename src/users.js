@@ -1,6 +1,6 @@
 // in src/users.js
 import React from 'react';
-import { List, Edit, EditButton, Datagrid, TextField, BooleanField, TextInput, BooleanInput, SimpleForm, DisabledInput } from 'react-admin';
+import { List, Create, Edit, EditButton, Datagrid, TextField, BooleanField, TextInput, BooleanInput, SimpleForm, DisabledInput } from 'react-admin';
 import { Filter } from 'react-admin';
 
 const UserFilter = (props) => (
@@ -16,7 +16,6 @@ export const UserList = (props) => (
             <TextField source="user_kod" />
             <TextField source="user_ad" />
             <TextField source="user_soyad" />
-            <TextField source="user_sifre" />
             <BooleanField source="durum" />
             <EditButton />
         </Datagrid>
@@ -24,7 +23,7 @@ export const UserList = (props) => (
 );
 
 const UserTitle = ({ record }) => {
-    return <span>Post {record ? `"${record.title}"` : ''}</span>;
+    return <span>Kullanıcı: {record ? `"${record.user_kod}"` : ''}</span>;
 };
 
 export const UserEdit = (props) => (
@@ -34,8 +33,20 @@ export const UserEdit = (props) => (
             <TextInput source="user_kod" />
             <TextInput source="user_ad" />
             <TextInput source="user_soyad" />
-            <TextInput source="user_sifre" />
+            <TextInput source="user_sifre" type="password"/>
             <BooleanInput source="durum" />
         </SimpleForm>
     </Edit>
+);
+
+export const UserCreate = (props) => (
+    <Create {...props}>
+        <SimpleForm>
+          <TextInput source="user_kod" />
+          <TextInput source="user_ad" />
+          <TextInput source="user_soyad" />
+          <TextInput source="user_sifre" />
+          <BooleanInput source="durum" />
+        </SimpleForm>
+    </Create>
 );
