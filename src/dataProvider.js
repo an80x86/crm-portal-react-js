@@ -11,7 +11,7 @@ import {
 } from 'react-admin';
 import { stringify } from 'query-string';
 
-const API_URL = 'http://jsonplaceholder.typicode.com';
+const API_URL = 'http://localhost:49793/Handler.ashx?cmd=';//'http://jsonplaceholder.typicode.com';
 
 /**
  * @param {String} type One of the constants appearing at the top if this file, e.g. 'UPDATE'
@@ -28,8 +28,10 @@ const convertDataProviderRequestToHTTP = (type, resource, params) => {
         let start = (page - 1) * perPage;
         let sort = order.toLowerCase();
         let filt = params.filter.q === undefined ? '' : 'q=' + params.filter.q+'&';
-        let url = `${API_URL}/${resource}?${filt}_start=${start}&_sort=${field}&_order=${sort}&_limit=${perPage}`;
-        return { url: url };
+        //let url = `${API_URL}/${resource}?${filt}_start=${start}&_sort=${field}&_order=${sort}&_limit=${perPage}`;
+        let url = `${API_URL}${resource}&${filt}_start=${start}&_sort=${field}&_order=${sort}&_limit=${perPage}`;
+        console.log(url);
+        return { url };
     }
     case GET_ONE:
         return { url: `${API_URL}/${resource}/${params.id}` };
@@ -80,12 +82,12 @@ const convertDataProviderRequestToHTTP = (type, resource, params) => {
  * @returns {Object} Data Provider response
  */
 const convertHTTPResponseToDataProvider = (response, type, resource, params) => {
-    const { headers, json } = response;
+    const { json } = response;
     switch (type) {
     case GET_LIST:
         return {
-            data: json.map(x => x),
-            total: parseInt(headers.get('X-Total-Count').split('/').pop(), 10)
+            data: json.data.map(x => x),
+            total: parseInt(json.count, 10)
         };
     case CREATE:
         return { data: { ...params.data, id: json.id } };
