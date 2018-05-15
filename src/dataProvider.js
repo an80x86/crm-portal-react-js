@@ -54,17 +54,17 @@ const convertDataProviderRequestToHTTP = (type, resource, params) => {
     case UPDATE:
         const options = { method: 'PUT', body: JSON.stringify(params.data) };
         return {
-            url : `${API_URL}${resource}&id=${params.id}`,
+            url: `${API_URL}${resource}&id=${params.id}`,
             options
         };
     case CREATE:
         return {
-            url: `${API_URL}/${resource}`,
+            url: `${API_URL}${resource}`,
             options: { method: 'POST', body: JSON.stringify(params.data) },
         };
     case DELETE:
         return {
-            url: `${API_URL}/${resource}/${params.id}`,
+            url: `${API_URL}${resource}&id=${params.id}`,
             options: { method: 'DELETE' },
         };
     default:
@@ -89,7 +89,8 @@ const convertHTTPResponseToDataProvider = (response, type, resource, params) => 
             total: parseInt(json.count, 10)
         };
     case CREATE:
-        return { data: { ...params.data, id: json.id } };
+        return { data: { ...params.data, id: json.data[0].id } };
+    case DELETE:
     case GET_ONE:
     case UPDATE:
       const don = json.data[0];
