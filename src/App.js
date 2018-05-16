@@ -10,8 +10,6 @@ import Dashboard from './Dashboard';
 import authProvider from './authProvider';
 import dataProvider from './dataProvider';
 
-//const dataProvider = jsonServerProvider('http://jsonplaceholder.typicode.com');
-
 const App = () => (
     <Admin title="crm portal v1.2" dashboard={Dashboard} authProvider={authProvider} dataProvider={dataProvider}>
         <Resource name="posts" list={PostList} edit={PostEdit} create={PostCreate} icon={PostIcon} />

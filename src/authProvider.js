@@ -5,21 +5,25 @@ export default (type, params) => {
     // called when the user attempts to log in
     if (type === AUTH_LOGIN) {
       const { username, password } = params;
+      const body = JSON.stringify({ username, password });
+      console.log("body " + body);
       const request = new Request('http://localhost:49793/Handler.ashx?cmd=dologin', {
           method: 'POST',
-          body: JSON.stringify({ username, password }),
+          body,
           headers: new Headers({ 'Content-Type': 'application/json' }),
       })
-      return fetch(request)
+      return
+          fetch(request)
           .then(response => {
-              //console.log("1 " + response);
+              console.log("1 " + response);
               return response.json();
           })
           .then((response) => {
+              console.log("2 " + response);
               if (response) {
               localStorage.setItem('username', username);
-              //console.log("2 " + response);
             } else {
+              console.log("3 " + response);
               return Promise.reject();
             }
           });
